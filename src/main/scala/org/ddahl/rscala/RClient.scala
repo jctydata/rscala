@@ -251,8 +251,18 @@ object RClient {
     }
     val processIO = new ProcessIO(
       o => { cmd = new PrintWriter(o) },
-      reader(""),
-      reader(""),
+      out => { // stdout
+        val src = scala.io.Source.fromInputStream(out)
+        for (line <- src.getLines()) {
+          println(line)
+        }
+      },
+      err => { // stderr
+        val src = scala.io.Source.fromInputStream(err)
+        for (line <- src.getLines()) {
+          println(line)
+        }
+      },
       true
     )
     val rProcessInstance = processCmd.run(processIO)
